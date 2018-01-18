@@ -12,9 +12,9 @@ var gages = {
 function mk_gage_metric_103()
 {
   var m = [1.005];
-  for(i=1.01; i<=1.49; i+= .01) { m.push(i); }
-  for(i=.5; i<=24.50; i+= .5) { m.push(i); }
-  for(i=25; i<=100; i+= 25) { m.push(i); }
+  for(i=1.01; i<=1.49; i+= .01) { m.push(1.0* i.toFixed(5)); }
+  for(i=.5; i<=24.50; i+= .5) { m.push(1.0* i.toFixed(5)); }
+  for(i=25; i<=100; i+= 25) { m.push(1.0* i.toFixed(5)); }
 return m.sort(function(a,b) { return a-b} );
 }
 RAD2DEG=Math.PI / 180.0;
@@ -24,7 +24,7 @@ mCalc = function()
   var dist = $("#distance").val();
   var ang = $("#angle").val();
   var stackH = dist*Math.sin(ang * RAD2DEG);
-  $("#stackHeight").val(stackH);
+  $("#stackHeight").val(stackH.toFixed(5));
 };
 
 $(document).ready(function() {
