@@ -5,6 +5,8 @@
 <script src="lib/jquery-3.2.1.min.js" type="text/javascript"></script>
 <script src="lib/jquery-ui-1.12.1/jquery-ui.js" type="text/javascript"></script>
 <script>
+let RAD2DEG=Math.PI / 180.0;
+var gageSet='metric_103';
 var gages = {
   metric_103: mk_gage_metric_103()
 }
@@ -12,23 +14,57 @@ var gages = {
 function mk_gage_metric_103()
 {
   var m = [1.005];
-  for(i=1.01; i<=1.49; i+= .01) { m.push(1.0* i.toFixed(5)); }
-  for(i=.5; i<=24.50; i+= .5) { m.push(1.0* i.toFixed(5)); }
+  fixed=9;
+  for(i=1.01; i<=1.49; i+= .01) { m.push(1.0* i.toFixed(fixed)); }
+  for(i=.5; i<=24.50; i+= .5) { m.push(1.0* i.toFixed(fixed)); }
   for(i=25; i<=100; i+= 25) { m.push(1.0* i.toFixed(5)); }
-return m.sort(function(a,b) { return a-b} );
+  return m.sort(function(a,b) { return a-b} );
+  //return m.sort(function(a,b) { return b-a} );
 }
-RAD2DEG=Math.PI / 180.0;
+
 mCalc = function()
 {
-  console.debug("ASDLKJALSKJ");
   var dist = $("#distance").val();
   var ang = $("#angle").val();
   var stackH = dist*Math.sin(ang * RAD2DEG);
   $("#stackHeight").val(stackH.toFixed(5));
+  var sum = 0;
+
+  var blocks = [];
+for (var i = gages[gageSet].length-1 ; i >=0 ; i--)
+{
+  var tl = gages[gageSet][i];
+  console.debug(sum, sum+tl, stackH);
+  if(Math.abs(sum+tl  - stackH) < .00001)
+  {
+    sum += tl;
+    blocks.push(tl);
+    //console.debug(tl);
+    break;
+  } else if(sum+tl  +1 <= stackH)
+  {
+    sum += tl;
+    blocks.push(tl);
+  }
+}
+for (var i = gages[gageSet].length-1 ; i >=0 ; i--)
+{
+  var tl = gages[gageSet][i];
+  if(sum+tl  <= stackH)
+  {
+    sum += tl;
+    blocks.push(tl);
+  }
+}
+  $("#oStack").html(blocks.join("<br>") + "<br>=" + sum);
+  console.debug(sum, tl);
+  
+  
 };
 
 $(document).ready(function() {
 mEvent="keyup";
+
 
 
 var dSlider = $("#Sdistance").slider({
